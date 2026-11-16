@@ -3,6 +3,8 @@ require('dotenv').config();
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
+const pgSession = require('connect-pg-simple')(session);
+const pool = require('./db');
 
 const homeRoutes = require('./routes/home');
 const authRoutes = require('./routes/auth');
@@ -23,6 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 if (isProduction) app.set('trust proxy', 1);
 
 app.use(session({
+  store: new pgSession({ pool, tableName: 'session' }),
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
@@ -60,4 +63,8 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+if (!process.env.VERCEL) {
+  app.listen(port, () => console.log(`Server running at http://localhost:${port}`));
+}
+
+module.exports = app;

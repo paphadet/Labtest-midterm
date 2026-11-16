@@ -79,3 +79,14 @@ SELECT v.*, true FROM (VALUES
   ('The Psychology of Money',        'Morgan Housel',            '9780857197689', 'พัฒนาตนเอง',    1, 1)
 ) AS v(book_name, book_author, book_isbn, book_category, book_total, book_available)
 WHERE NOT EXISTS (SELECT 1 FROM book);
+
+-- ตารางเก็บ session ของ express-session (connect-pg-simple)
+CREATE TABLE IF NOT EXISTS "session" (
+  sid    VARCHAR      NOT NULL PRIMARY KEY,
+  sess   JSON         NOT NULL,
+  expire TIMESTAMP(6) NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" (expire);
+
+ALTER TABLE "session" ENABLE ROW LEVEL SECURITY;
