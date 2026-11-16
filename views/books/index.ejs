@@ -20,7 +20,7 @@
   <p class="muted">ไม่พบหนังสือที่ค้นหา</p>
 <% } else { %>
   <p class="muted">พบ <%= books.length %> รายการ</p>
-  <table class="table">
+  <table class="table table-stack">
     <thead>
       <tr>
         <th>ชื่อหนังสือ</th>
@@ -33,15 +33,15 @@
     <tbody>
       <% books.forEach(book => { %>
         <tr>
-          <td><a href="/books/<%= book.book_id %>"><%= book.book_name %></a></td>
-          <td><%= book.book_author %></td>
-          <td><span class="tag"><%= book.book_category || '-' %></span></td>
-          <td>
+          <td class="cell-title"><a href="/books/<%= book.book_id %>"><%= book.book_name %></a></td>
+          <td data-label="ผู้แต่ง"><%= book.book_author %></td>
+          <td data-label="หมวด"><span class="tag"><%= book.book_category || '-' %></span></td>
+          <td data-label="คงเหลือ">
             <span class="<%= book.book_available > 0 ? 'ok' : 'danger' %>">
               <%= book.book_available %> / <%= book.book_total %>
             </span>
           </td>
-          <td class="right">
+          <td class="right cell-action">
             <% if (book.book_available > 0) { %>
               <form method="POST" action="/books/<%= book.book_id %>/borrow" class="inline">
                 <button type="submit" class="btn btn-sm">ยืม</button>

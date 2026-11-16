@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= typeof title !== 'undefined' ? title + ' | ห้องสมุด' : 'ห้องสมุด' %></title>
   <link rel="stylesheet" href="/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
   <nav class="nav">
@@ -12,16 +13,21 @@
       <a href="/" class="brand">SKIN-MEDIA</a>
 
       <% if (currentUser) { %>
-        <div class="nav-links">
-          <a href="/home">หน้าแรก</a>
-          <a href="/books">หนังสือ</a>
-          <a href="/loans">ที่ฉันยืม</a>
-        </div>
-        <div class="nav-user">
-          <span><%= currentUser.username %></span>
-          <form method="POST" action="/logout" class="inline">
-            <button type="submit" class="btn btn-ghost">ออกจากระบบ</button>
-          </form>
+        <button type="button" class="nav-toggle" aria-label="เปิดเมนู" aria-expanded="false" aria-controls="nav-menu">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="nav-menu" id="nav-menu">
+          <div class="nav-links">
+            <a href="/home">หน้าแรก</a>
+            <a href="/books">หนังสือ</a>
+            <a href="/loans">ที่ฉันยืม</a>
+          </div>
+          <div class="nav-user">
+            <span class="nav-username"><%= currentUser.username %></span>
+            <form method="POST" action="/logout" class="inline">
+              <button type="submit" class="btn btn-ghost">ออกจากระบบ</button>
+            </form>
+          </div>
         </div>
       <% } else { %>
         <div class="nav-user">
@@ -31,6 +37,18 @@
       <% } %>
     </div>
   </nav>
+  <script>
+    (function () {
+      var btn = document.querySelector('.nav-toggle');
+      if (!btn) return;
+      var menu = document.getElementById('nav-menu');
+      btn.addEventListener('click', function () {
+        var open = menu.classList.toggle('open');
+        btn.setAttribute('aria-expanded', open);
+        btn.setAttribute('aria-label', open ? 'ปิดเมนู' : 'เปิดเมนู');
+      });
+    })();
+  </script>
 
   <main class="container">
     <%- include('flash') %>

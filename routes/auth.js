@@ -20,11 +20,13 @@ async function sendNewVerifyLink(user) {
 
 // ---------- Register ----------
 
+// ถ้าล็อกคอินอยู่แล้ว → ไปหน้า home
 router.get('/register', (req, res) => {
   if (req.session.user) return res.redirect('/home');
   res.render('auth/register', { error: null, form: {} });
 });
 
+// ตรวจสอบข้อมูลสมัครสมาชิก → ถ้าไม่ผ่าน → ส่ง error กลับไปหน้า register
 router.post('/register', async (req, res) => {
   const username = (req.body.username || '').trim();
   const email = (req.body.email || '').trim().toLowerCase();
@@ -78,6 +80,7 @@ router.post('/register', async (req, res) => {
 
 // ---------- Verify email ----------
 
+// ตรวจสอบ token จากลิงก์ยืนยันอีเมล → ถ้าไม่ถูกต้องหรือหมดอายุ → ส่ง error กลับไปหน้า login
 router.get('/verify-email', async (req, res) => {
   const token = String(req.query.token || '');
   const { rows } = await pool.query(
@@ -104,11 +107,13 @@ router.get('/verify-email', async (req, res) => {
 
 // ---------- Login / Logout ----------
 
+// ถ้าล็อกคอินอยู่แล้ว → ไปหน้า home
 router.get('/login', (req, res) => {
   if (req.session.user) return res.redirect('/home');
   res.render('auth/login', { error: null, message: null, form: {} });
 });
 
+// ตรวจสอบข้อมูล login → ถ้าไม่ผ่าน → ส่ง error กลับไปหน้า login
 router.post('/login', async (req, res) => {
   const login = (req.body.login || '').trim(); // ชื่อผู้ใช้ หรือ อีเมล ก็ได้
   const password = req.body.password || '';
