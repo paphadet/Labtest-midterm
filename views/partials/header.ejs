@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= typeof title !== 'undefined' ? title + ' | ห้องสมุด' : 'ห้องสมุด' %></title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="/" class="brand">SKIN-MEDIA</a>
+
+      <% if (currentUser) { %>
+        <div class="nav-links">
+          <a href="/home">หน้าแรก</a>
+          <a href="/books">หนังสือ</a>
+          <a href="/loans">ที่ฉันยืม</a>
+        </div>
+        <div class="nav-user">
+          <span><%= currentUser.username %></span>
+          <form method="POST" action="/logout" class="inline">
+            <button type="submit" class="btn btn-ghost">ออกจากระบบ</button>
+          </form>
+        </div>
+      <% } else { %>
+        <div class="nav-user">
+          <a href="/login">เข้าสู่ระบบ</a>
+          <a href="/register" class="btn">สมัครสมาชิก</a>
+        </div>
+      <% } %>
+    </div>
+  </nav>
+
+  <main class="container">
+    <%- include('flash') %>

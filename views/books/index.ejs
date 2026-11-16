@@ -1,0 +1,59 @@
+<%- include('../partials/header') %>
+
+<h1>รายการหนังสือ</h1>
+
+<form method="GET" action="/books" class="search">
+  <input type="text" name="q" value="<%= q %>" placeholder="ค้นหาชื่อหนังสือหรือผู้แต่ง">
+  <select name="category">
+    <option value="">ทุกหมวด</option>
+    <% categories.forEach(c => { %>
+      <option value="<%= c %>" <%= c === category ? 'selected' : '' %>><%= c %></option>
+    <% }) %>
+  </select>
+  <button type="submit" class="btn">ค้นหา</button>
+  <% if (q || category) { %>
+    <a href="/books" class="btn btn-ghost">ล้าง</a>
+  <% } %>
+</form>
+
+<% if (books.length === 0) { %>
+  <p class="muted">ไม่พบหนังสือที่ค้นหา</p>
+<% } else { %>
+  <p class="muted">พบ <%= books.length %> รายการ</p>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ชื่อหนังสือ</th>
+        <th>ผู้แต่ง</th>
+        <th>หมวด</th>
+        <th>คงเหลือ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% books.forEach(book => { %>
+        <tr>
+          <td><a href="/books/<%= book.book_id %>"><%= book.book_name %></a></td>
+          <td><%= book.book_author %></td>
+          <td><span class="tag"><%= book.book_category || '-' %></span></td>
+          <td>
+            <span class="<%= book.book_available > 0 ? 'ok' : 'danger' %>">
+              <%= book.book_available %> / <%= book.book_total %>
+            </span>
+          </td>
+          <td class="right">
+            <% if (book.book_available > 0) { %>
+              <form method="POST" action="/books/<%= book.book_id %>/borrow" class="inline">
+                <button type="submit" class="btn btn-sm">ยืม</button>
+              </form>
+            <% } else { %>
+              <span class="muted">หมด</span>
+            <% } %>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('../partials/footer') %>

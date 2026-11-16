@@ -1,0 +1,74 @@
+<%- include('../partials/header') %>
+
+<h1>หนังสือที่ฉันยืม</h1>
+
+<% if (activeLoans.length === 0) { %>
+  <p class="muted">ยังไม่มีหนังสือที่ยืมอยู่ — <a href="/books">ไปเลือกหนังสือ</a></p>
+<% } else { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ชื่อหนังสือ</th>
+        <th>วันที่ยืม</th>
+        <th>กำหนดคืน</th>
+        <th>สถานะ</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% activeLoans.forEach(loan => { %>
+        <tr class="<%= loan.days_late > 0 ? 'row-danger' : '' %>">
+          <td>
+            <a href="/books/<%= loan.book_id %>"><%= loan.book_name %></a>
+            <div class="muted small"><%= loan.book_author %></div>
+          </td>
+          <td><%= loan.borrowed_text %></td>
+          <td><%= loan.due_text %></td>
+          <td>
+            <% if (loan.days_late > 0) { %>
+              <span class="danger">เกินกำหนด <%= loan.days_late %> วัน</span>
+            <% } else if (loan.days_late === 0) { %>
+              <span class="warn">ครบกำหนดวันนี้</span>
+            <% } else { %>
+              <span class="ok">เหลือ <%= -loan.days_late %> วัน</span>
+            <% } %>
+          </td>
+          <td class="right">
+            <form method="POST" action="/loans/<%= loan.loan_id %>/return" class="inline">
+              <button type="submit" class="btn btn-sm">คืน</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<h2>ประวัติการยืม</h2>
+
+<% if (history.length === 0) { %>
+  <p class="muted">ยังไม่มีประวัติการคืน</p>
+<% } else { %>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>ชื่อหนังสือ</th>
+        <th>วันที่ยืม</th>
+        <th>วันที่คืน</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% history.forEach(h => { %>
+        <tr>
+          <td><%= h.book_name %></td>
+          <td><%= h.borrowed_text %></td>
+          <td><%= h.returned_text %></td>
+          <td><% if (h.was_late) { %><span class="danger small">คืนช้า</span><% } %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+<% } %>
+
+<%- include('../partials/footer') %>

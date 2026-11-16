@@ -1,0 +1,31 @@
+<%- include('../partials/header') %>
+
+<p><a href="/books">← กลับไปหน้ารายการ</a></p>
+
+<div class="card">
+  <h1><%= book.book_name %></h1>
+
+  <dl class="detail">
+    <dt>ผู้แต่ง</dt>   <dd><%= book.book_author %></dd>
+    <dt>หมวด</dt>     <dd><%= book.book_category || '-' %></dd>
+    <dt>ISBN</dt>     <dd><%= book.book_isbn || '-' %></dd>
+    <dt>คงเหลือ</dt>
+    <dd class="<%= book.book_available > 0 ? 'ok' : 'danger' %>">
+      <%= book.book_available %> จาก <%= book.book_total %> เล่ม
+    </dd>
+  </dl>
+
+  <% if (myLoan) { %>
+    <div class="alert alert-info">
+      คุณยืมเล่มนี้อยู่ กำหนดคืน <%= myLoan.due_text %> — <a href="/loans">ไปหน้าคืนหนังสือ</a>
+    </div>
+  <% } else if (book.book_available > 0) { %>
+    <form method="POST" action="/books/<%= book.book_id %>/borrow">
+      <button type="submit" class="btn">ยืมหนังสือเล่มนี้ (<%= loanDays %> วัน)</button>
+    </form>
+  <% } else { %>
+    <p class="danger">หนังสือเล่มนี้ถูกยืมหมดแล้ว</p>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>
