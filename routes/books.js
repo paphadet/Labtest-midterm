@@ -9,10 +9,12 @@ const MAX_ACTIVE_LOANS = 3;
 
 router.use(requireLogin);
 
+// แปลง id เป็นตัวเลข ถ้าไม่ใช่ตัวเลข → return null
 function parseId(value) {
   return /^\d+$/.test(value) ? Number(value) : null;
 }
 
+// Query หนังสือ
 router.get('/', async (req, res) => {
   const q = (req.query.q || '').trim();
   const category = (req.query.category || '').trim();
@@ -50,6 +52,7 @@ router.get('/', async (req, res) => {
   });
 });
 
+// แสดงรายละเอียดหนังสือ
 router.get('/:id', async (req, res, next) => {
   const bookId = parseId(req.params.id);
   if (!bookId) return next();
@@ -74,15 +77,16 @@ router.get('/:id', async (req, res, next) => {
 
 class BorrowError extends Error {}
 
+// ยืมหนังสือ
 router.post('/:id/borrow', async (req, res, next) => {
   const bookId = parseId(req.params.id);
   if (!bookId) return next();
   const userId = req.session.user.id;
-
+  
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-
+    // ตรวจสอบหนังสือและจำนวนที่ยืมได้
     const { rows } = await client.query(
       'SELECT book_name, book_available FROM book WHERE book_id = $1 FOR UPDATE',
       [bookId]

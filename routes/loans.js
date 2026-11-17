@@ -9,6 +9,7 @@ router.use(requireLogin);
 router.get('/', async (req, res) => {
   const userId = req.session.user.id;
 
+  // ดึงรายการยืมหนังสือที่ยังไม่คืน และประวัติการยืมหนังสือของผู้ใช้
   const { rows: activeLoans } = await pool.query(
     `SELECT l.loan_id, b.book_id, b.book_name, b.book_author,
             to_char(l.borrowed_at AT TIME ZONE 'Asia/Bangkok', 'DD/MM/YYYY') AS borrowed_text,

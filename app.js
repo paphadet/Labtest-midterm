@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: false }));
 
 if (isProduction) app.set('trust proxy', 1);
 
+// ตั้งค่า session
 app.use(session({
   store: new pgSession({ pool, tableName: 'session' }),
   secret: process.env.SESSION_SECRET,
@@ -36,6 +37,7 @@ app.use(session({
   },
 }));
 
+// middleware สำหรับส่งข้อมูล user และ flash message ไปยัง view
 app.use((req, res, next) => {
   res.locals.currentUser = req.session.user || null;
 
@@ -45,16 +47,19 @@ app.use((req, res, next) => {
   next();
 });
 
+// ตั้งค่า routes
 app.use(homeRoutes);
 app.use(authRoutes);
 app.use('/books', bookRoutes);
 app.use('/loans', loanRoutes);
 app.use('/user', userRoutes);
 
+// middleware สำหรับจัดการ 404 และ 500
 app.use((req, res) => {
   res.status(404).render('404', { title: 'ไม่พบหน้า' });
 });
 
+// middleware สำหรับจัดการ error
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).render('error', {
